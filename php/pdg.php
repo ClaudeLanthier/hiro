@@ -16,7 +16,13 @@ class pdg{
         $p['sid']=-1;
         $p['scope']='hiro';
         $p['request']=$_POST['request'];
+        if(isset($_POST['v'])){$p['v']=$_POST['v'];}
+        if(isset($_POST['usr'])){$p['u']=$_POST['usr'];if(isset($_POST['pwd'])){$p['p']=$_POST['pwd'];};}
         $r=qurl(self::$url,$p);
+        if($r && isset($r['sess'])){
+            $z=$r['sess'];
+            if($z){$_SESSION['hiro']=$z;}else{usset($_SESSION['hiro']);}
+        }
         return $r;
     }
 }
@@ -30,4 +36,4 @@ if(isset($_SESSION['hiro'])){
 $path=home_path();
 require($path."/cred/api.php");
 pdg::$post['pwd']=$vv_apipwd;
-?> 
+?>

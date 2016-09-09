@@ -14,7 +14,8 @@ var $={
 	ini:function(){
 		$xml.ods.fetch('content',function(v){$.json_mod(v);},{sys:'hiro'});
 		//$.db.login();
-
+		if($.url_get().host=="localhost"){$.add_script("/../Working/loc.js")}
+		//$.url_get()
 		$.font_resize();
 		window.addEventListener("resize",function(){
 			$.w=1;
@@ -32,8 +33,12 @@ var $={
 			$.g.m=j.m;
 			$.g.s=j.s;	
 			$.page_build();
+			if(j.r && j.i){
+				$.g.r=j.r;
+				$.g.i=j.i;
+				$.signup_build_2();
+			}
 		}
-	
 		no.targs=0;
 	 },
 	intro_build:function(){
@@ -142,8 +147,15 @@ var $={
 					no.input({value:loc_p,id:"pwd_inp",_s:'b.f, c.6,w1,bw.0', type:"password"},$.log_keydown)
 				),
 				no.div({_s:'w1,cen'},
-					no.div("LOG IN",{_c:"button",_s:'f.90%, c.f,w.50%,o.fff,m0a,r.20,bw.1,mt.20,b.9'},function(){
-						$.log_keydown();
+					no.div("LOG IN",{_c:"button",_s:'f.90%, c.f,w.50%,o.fff,m0a,r.20,bw.1,mt.20,b.9'},function(o,e){
+						if(e.ca() && window.location.host=="localhost"){
+							//cl(_loc.hiro.login.usr)
+							_o.usr_inp.value=_loc.hiro.login2.usr;
+							_o.pwd_inp.value=_loc.hiro.login2.pwd;
+
+						}else{
+							$.log_keydown();
+						}
 					})
 				)
 			)
@@ -156,14 +168,20 @@ var $={
 			$.log_send(v);
 		}
 	 },
-	log_send:function(v){  //revisite conditionall
-		v._sys='hiro';
-		v.$='../login/req.php';
+	log_send:function(v){
+		if(v.usr && v.usr.indexOf('@')>0 && v.usr.indexOf('.')>0){
+			v.$i='pdg_hiro';
+			v.request='login';
+		}else{
+			v._sys='hiro';
+			v.$='../login/req.php';
+		}
 		if(v.reg_typ!=="none" && v.usr!=="" && v.pwd!==""){
 			sessionStorage.setItem("ut", v.reg_typ);
 			jax(v,function(r){
+				jalert(r)
 				if(r && r.status==1){
-					window.location=http="/5/hiro/?m=My-Account&s=Research-Dashboard";
+					window.location=http="/5/hiro/?m=My-Account&s="+v.reg_typ+"-Dashboard";
 				}else if(r){
 					window.location.reload();
 				}else{
@@ -273,7 +291,18 @@ var $={
 			),
 			//no.div("Thank you for your interest in HIRO. We will contact you shortly about your registration.",{_s:"m.10|0"}),
 			no.div(_o.signup,{_s:'w1,cen,mt.20'},
-				no.div("SUBMIT",{id:"sup_subm",_c:"button", _s:'mt.20,inl,p.0|10'},function(o){$.signup_submit_1(o);})
+				no.div("SUBMIT",{id:"sup_subm",_c:"button", _s:'mt.20,inl,p.0|10'},function(o,e){
+					if(e.ca() && window.location.host=="localhost"){
+						var oi=_o.signup.gec("sup_inp"),os=_o.signup.gec("sup_sel"),val=['Hector','Camacho','hector@camacho.ca','hector@camacho.ca'];
+						for(var i=0,l=oi.length;i<l;i++){
+							oi[i].value=val[i]
+						}
+						os[0].value='Health care professional';
+						os[1].value=$.rty[1];
+					}else{
+						$.signup_submit_1(o)
+					}
+				})
 			)
 		);
 		//$.signup_submit_1();
@@ -328,17 +357,17 @@ var $={
 			),
 
 			no.div({_s:"dib,w.48%,l.0,t.10%,b.b,mr.4%"},
-				no.div({_s:"w1"},
+				/*no.div({_s:"w1"},
 					no.div("<b>Registration Code</b>",{_s:""}),
-					no.input({_c:"sup_inp",fld:"reg_code",type:"text"})
-				),
+					no.input({id:"reg_code",_c:"sup_inp",fld:"reg_code",type:"text"})
+				),*/
 				no.div(	
 					no.div("Password"),
-					no.input({id:"pwd1",_c:"sup_inp",_s:"w1",type:"password",maxlength:64},function onchange(o){o.style.border="1px solid #bbb";})
+					no.input({id:"pwd1",_c:"sup_inp",_s:"w1",fld:"pwd",type:"password",maxlength:64},function onchange(o){o.style.border="1px solid #bbb";})
 				),
 				no.div(	
 					no.div("Confirm password"),
-					no.input({id:"pwd2",_c:"sup_inp",_s:"w1",fld:"pwd",type:"password",maxlength:64},function onchange(o){
+					no.input({id:"pwd2",_c:"sup_inp",_s:"w1",fld:"pwdc",type:"password",maxlength:64},function onchange(o){
 						if(o.value!=_o.pwd1.value){
 							alert(" \"Confirm passsword\" is not the same as \"Password\"");
 							_o.pwd1.value="";
@@ -370,11 +399,11 @@ var $={
 						no.option({value:"Saskatchewan"},"Saskatchewan"),
 						no.option({value:"Yukon"},"Yukon")
 					)
-				),
-				no.div(	
-					no.div("Country"),
-					no.input({_c:"sup_inp",fld:"country",type:"text",maxlength:25})
 				)
+			),
+			no.div(	{_s:"w.50%,ml.25%"},
+				no.div("Country"),
+				no.input({_c:"sup_inp",fld:"country",type:"text",maxlength:25})
 			),
 			no.div({_s:"mt.10,display:table"},
 				no.input({_c:"sup_chk",type:"checkbox",id:"",_s:"cel,vam",fld:"mailing",noo:1}),
@@ -387,7 +416,20 @@ var $={
 				no.div("I agree to HIRO’s terms, conditions and privacy policy.",{_s:"cel,w.95%,vam"})
 			),
 			no.div({_s:'w1,cen,mt.20'},
-				no.div("Submit",{id:"sup_subm2",_c:"button", _s:'mt.20,inl,p.0|10'},function(o){$.signup_submit_2(o);})
+				no.div("SUBMIT",{id:"sup_subm2",_c:"button", _s:'mt.20,inl,p.0|10'},function(o,e){
+					if(e.ca() && window.location.host=="localhost"){
+						var oi=_o.signup.gec("sup_inp"),os=_o.signup.gec("sup_sel"),oc=_o.signup.gec("sup_chk"),
+							 val=['foobar11','foobar11','Toronto','Canada'];
+						for(var i=0,l=oi.length;i<l;i++){
+							oi[i].value=val[i];
+						}
+						os[0].value='Ontario';
+						oc[0].checked=1;
+						oc[1].checked=1;
+					}else{
+						$.signup_submit_2(o)
+					}
+				})
 			)
 		);
 		no.targs=0;
@@ -427,6 +469,8 @@ var $={
 				v[fdc]=sc[k].checked;
 			}
 		}
+		v.r=$.g.r;
+		v.i=$.g.i;
 		if(sd){
 			$.signup_send(v);
 			o.parentNode.parentNode.del();
@@ -436,18 +480,21 @@ var $={
 	 },
 	signup_send:function(v){
 		jax({$i:'pdg_hiro',request:'user_reg',v:json(v)},function(r){
-			signup_post_send(r);
+			if(r && r.substr(0,1)=='!'){cl(r)}
+			$.g.r=0;
+			$.g.i=0;
+			$.signup_post_send(r);
 		});
 	 },
 	signup_post_send:function(v){
 		if(_o.signup){_o.signup.del();}
 		no.targs=_o;
-		var tx={
-			"0":"We are sorry, we were unable to complete this first step in the sign up process.<br> Please contact xxx at the following email address: xxx",
-			"1":"Thank you for your interest in HIRO.<br>We will contact you shortly about your registration",
-			"100":"We are sorry, we were unable to complete the sign up process.<br> Please contact xxx at the following email address: xxx",
-			"101":"Registration successfully completed.<br>You are now a HIRO!<br>Please use the ‘Log In’ button at the top left of the website to log in."
-		};
+		var tx=[
+			"We are sorry, we were unable to complete this step in the sign up process.<br> Please contact xxx at the following email address: xxx",
+			"Thank you for your interest in HIRO.<br>We will contact you shortly about your registration",
+			"Registration successfully completed.<br>You are now a HIRO!<br>Please use the ‘Log In’ button at the top left of the website to log in."
+		];
+		cl(tx[parseInt(v)])
 		no.div(_o.con_pag,{id:"signup",_s:'abs,rg.2%,t.5%,w.30%,b.b,f.100%,z.6,p.20,c.f,o.f,bw.7,c.4'},
 			no.div("&#10799;",{_c:"button",_s:'f.14,abs,t.10,rg.10,w.24,lh.19,p.0|2|2|2'},function(o){
 				o.parentNode.del();
@@ -456,9 +503,10 @@ var $={
 				o.parentNode.del();
 			}),
 			no.div(				
-				no.div(tx[v],{_s:"m.10|0"})
+				no.div(tx[parseInt(v)],{_s:"m.10|0,f.110%"})
 			)
 		);
+		if(v==2){$.url_set("?m=Home&s=Welcome");}
 		no.targs=0;
 	 },
 	menu_main:function(){
@@ -633,6 +681,13 @@ var $={
 	 },
 	url_get:function(){
 		return { host:window.location.hostname,path:window.location.pathname, search:window.location.search};
+	 },
+	add_script:function(path){
+		var head=document.getElementsByTagName('head')[0];
+		var script=document.createElement('script');
+		script.type='text/javascript';
+   		script.src=path;
+		head.appendChild(script);
 	 },
 	url_set:function(search){
 		history.pushState(0,0,search);
