@@ -65,3 +65,6 @@ input[type='checkbox']{ color: green;background-color: green;}
 .qxmd-read-widget-followers-container a{font-size:80%!important,c.666!important}
 .qxmd-read-widget-article-author{font-size:80%!important,c.666!important}
 .qxmd-read-widget-article-journal{font-size:80%!important,c.666!important}
+
+.sup_inp{o.bbb,mb.5}
+.sup_sel{o.bbb,mb.2}

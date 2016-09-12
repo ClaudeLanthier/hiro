@@ -7,14 +7,13 @@ var $={
 	ssl:0,
 	cc:[],
 	tg:{},
+	dem:0,
 	su:[],
 	rty:["","Directly from HIRO","A Health Care Professional","A Patient","A Family Member","Social Media","Other"],
 	w:1,
 	ini:function(){
 		//$xml.ods.fetch('content',function(v){$.json_mod(v);},{sys:'hiro'});
-		//$.db.login();
-		if($.url_get().host=="localhost"){$.add_script("/../Working/loc.js")}
-		//$.url_get()
+		if($.url_get().host=="localhost"){$.add_script("/../Working/loc.js");}
 		$.font_resize();
 		window.addEventListener("resize",function(){
 			$.w=1;
@@ -50,12 +49,12 @@ var $={
 				no.div({_s:'b.999,m0a,cen,h.20%'})
 			)
 		);
-		no.div(_o.con_pag,{id:"con_mid",_s:',h.70%,w.70%,m0a,f.100%,blo'},
+		no.div(_o.con_pag,{id:"con_mid",_s:',h.70%,w.60%,m0a,f.100%,blo'},
 			no.div({_s:'m0a,cen,h.25%'}),
 			no.div(_o.mid_cen,{id:"con_ini",_s:'blo,m0a,cen,h.50%,f.100%'}, 
 				no.div({_s:"f.280%,m0a,c.6,pb.20,font-family:'Cinzel';"},"Hearts in Rhythm Organization"),
-				no.div({_s:'m0a,c.8,f.200%'},"Welcome to HIRO, a place where we hope you can find all of the information and connections to understand "),
-				no.div({_s:'m0a,c.8,f.200%'}," and live to the fullest with an inherited heart rhythm condition.")
+				no.div({_s:'m0a,c.8,f.200%'},"Welcome to HIRO, a place where we hope you can find all of the information and connections to understand and live to the fullest with an inherited heart rhythm condition.")/*,
+				no.div({_s:'m0a,c.8,f.200%'}," and live to the fullest with an inherited heart rhythm condition.")*/
 			),
 			no.div({_s:'m0a,cen,h.25%'})
 		);
@@ -177,8 +176,7 @@ var $={
 		}
 		if(v.usr!=="" && v.pwd!==""){
 			jax(v,function(r){
-
-	if(r && r.status==1){
+		if(r && r.status==1){
 					sessionStorage.setItem("ut",r.sess.reg_typ);
 					var rd=r.sess.reg_typ.replace(/ /g,"-");
 					window.location=http="/5/hiro/?m=My-Account&s="+rd+"-Dashboard";
@@ -242,7 +240,7 @@ var $={
 			),
 			no.div({_s:"dib,w.48%,l.0,t.10%,b.b,mr.4%"},
 				no.div(
-					no.div("First name"),function onchange(o){o.style.border="1px solid #bbb";},
+					no.div("First name"),
 					no.input({_c:"sup_inp",fld:"n1",type:"text",maxlength:35},function onchange(o){o.style.border="1px solid #bbb";})
 				),
 				no.div(	
@@ -258,7 +256,7 @@ var $={
 						},
 						no.option({value:""},""),
 						no.option({value:"Research"},"Research"),
-						no.option({value:"Health care professional"},"Health care professional"),
+						no.option({value:"Health Care Professional"},"Health Care Professional"),
 						no.option({value:"Patient"},"Patient"),
 						no.option({value:"Other"},"Other")
 					)
@@ -267,11 +265,30 @@ var $={
 			no.div({_s:"dib,w.48%,b.b,t.10%"},
 				no.div(	
 					no.div("Email"),
-					no.input({_c:"sup_inp",_s:"w1",fld:"email",type:"email",maxlength:50},function onchange(o){o.style.border="1px solid #bbb";})
+					no.input({id:"email_1",_c:"sup_inp",_s:"w1",fld:"email",type:"email",maxlength:50},function onchange(o){
+						cl(o.value+"---"+_o.email_2.value)
+						if(o.value!==_o.email_2.value &&_o.email_2.value!==""){
+							o.style.border="1px solid #f00";
+							$.dem=1;
+						}else{
+							$.dem=0;
+							o.style.border="1px solid #bbb";
+							_o.email_2.style.border="1px solid #bbb";
+						}
+					})
 				),
 				no.div(	
 					no.div("Confirm email"),
-					no.input({_c:"sup_inp",_s:"w1",fld:"email",type:"email",maxlength:50},function onchange(o){o.style.border="1px solid #bbb";})
+					no.input({id:"email_2",_c:"sup_inp",_s:"w1",fld:"email",type:"email",maxlength:50},function onchange(o){
+						if(o.value!==_o.email_1.value){
+							o.style.border="1px solid #f00";
+							$.dem=1;
+						}else{
+							$.dem=0;
+							o.style.border="1px solid #bbb";
+							_o.email_1.style.border="1px solid #bbb";
+						}
+					})
 				),
 				no.div(	
 					no.div("How you heard about us"),
@@ -296,17 +313,17 @@ var $={
 					if(e.ca() && window.location.host=="localhost"){
 						var oi=_o.signup.gec("sup_inp"),os=_o.signup.gec("sup_sel"),val=['Hector','Camacho','hector@camacho.ca','hector@camacho.ca'];
 						for(var i=0,l=oi.length;i<l;i++){
-							oi[i].value=val[i]
+							oi[i].value=val[i];
 						}
 						os[0].value='Health care professional';
 						os[1].value=$.rty[1];
 					}else{
-						$.signup_submit_1(o)
+						if(!$.dem){$.signup_submit_1(o);}
+						else{alert("Your email address and your confirmed email address must be the same.");}
 					}
 				})
 			)
 		);
-		//$.signup_submit_1();
 		no.targs=0;
 	 },
 	signup_keydown_1:function onkeydown(o,e){
@@ -428,7 +445,7 @@ var $={
 						oc[0].checked=1;
 						oc[1].checked=1;
 					}else{
-						$.signup_submit_2(o)
+						$.signup_submit_2(o);
 					}
 				})
 			)
@@ -481,7 +498,7 @@ var $={
 	 },
 	signup_send:function(v){
 		jax({$i:'pdg_hiro',request:'user_reg',v:json(v)},function(r){
-			if(r && r.substr(0,1)=='!'){cl(r)}
+			if(r && r.substr(0,1)=='!'){jalert(r);}
 			$.g.r=0;
 			$.g.i=0;
 			$.signup_post_send(r);
@@ -495,7 +512,6 @@ var $={
 			"Thank you for your interest in HIRO.<br>We will contact you shortly about your registration",
 			"Registration successfully completed.<br>You are now a HIRO!<br>Please use the ‘Log In’ button at the top left of the website to log in."
 		];
-		cl(tx[parseInt(v)])
 		no.div(_o.con_pag,{id:"signup",_s:'abs,rg.2%,t.5%,w.30%,b.b,f.100%,z.6,p.20,c.f,o.f,bw.7,c.4'},
 			no.div("&#10799;",{_c:"button",_s:'f.14,abs,t.10,rg.10,w.24,lh.19,p.0|2|2|2'},function(o){
 				o.parentNode.del();
@@ -675,7 +691,6 @@ var $={
 	ses_var_get:function(k){
 		var v=sessionStorage.getItem(k);
 		v=(v)?v.toLowerCase():false;
-		cl(v)
 		return v;
 	 },
 	font_resize:function(){
