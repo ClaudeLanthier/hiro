@@ -163,7 +163,7 @@ var $={
 	 },
 	log_keydown:function onkeydown(o,e){
 		if(!o || e.keyCode==13){
-			var v={usr:_o.usr_inp.value,pwd:_o.pwd_inp.value,reg_typ:_o.usr_typ.selectedOptions[0].value,_act:"log"};
+			var v={usr:_o.usr_inp.value,pwd:_o.pwd_inp.value,_act:"log"};
 			$.log_send(v);
 		}
 	 },
@@ -177,16 +177,17 @@ var $={
 		}
 		if(v.usr!=="" && v.pwd!==""){
 			jax(v,function(r){
-				if(r && r.status==1){
+
+	if(r && r.status==1){
 					sessionStorage.setItem("ut",r.sess.reg_typ);
-					var rd=r.sess.reg_typ.replace(/ /g,"-")
-					jalert(rd)
+					var rd=r.sess.reg_typ.replace(/ /g,"-");
 					window.location=http="/5/hiro/?m=My-Account&s="+rd+"-Dashboard";
-				}else if(r){
-					window.location.reload();
 				}else{
-					alert('Login failed');
-					_o.log_in.del();
+					if(_o.log_in){
+						alert('Login failed');
+					}else{ //is a logout
+						window.location.reload();
+					}
 				}
 			});
 		}else{

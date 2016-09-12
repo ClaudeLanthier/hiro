@@ -25,7 +25,7 @@ class pdg{
             $z=json_decode($r,1);
             if(isset($z['sess'])){
                 $z=$z['sess'];
-                if($z){$_SESSION['hiro']=$z;}else{usset($_SESSION['hiro']);}
+                if($z){$_SESSION['hiro']=$z;}else{unset($_SESSION['hiro']);}
             }
         }
         return $r;
