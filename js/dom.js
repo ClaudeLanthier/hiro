@@ -8,11 +8,10 @@ var $={
 	cc:[],
 	tg:{},
 	su:[],
-	fot:["bc.jpg","van.jpg","cal.jpg","edm.jpg","win.jpg","ham.jpg","tor.jpg","kin.jpg","ott.jpg","mtl.jpg","que.jpg","hal.jpg"],
 	rty:["","Directly from HIRO","A Health Care Professional","A Patient","A Family Member","Social Media","Other"],
 	w:1,
 	ini:function(){
-		$xml.ods.fetch('content',function(v){$.json_mod(v);},{sys:'hiro'});
+		//$xml.ods.fetch('content',function(v){$.json_mod(v);},{sys:'hiro'});
 		//$.db.login();
 		if($.url_get().host=="localhost"){$.add_script("/../Working/loc.js")}
 		//$.url_get()
@@ -129,7 +128,7 @@ var $={
 				o.parentNode.del();
 			}),
 			no.div({_s:"w1,mt.10"},
-				no.div(	
+				/*no.div(	
 					no.div("User Type"),
 					no.select({id:"usr_typ",_c:"sup_sel"},
 						no.option({value:"none"},""),
@@ -137,7 +136,7 @@ var $={
 						no.option({value:"Health care professional"},"Health care professional"),
 						no.option({value:"Patient"},"Patient")
 					)
-				),
+				),*/
 				no.div(
 					no.div("Username"),
 					no.input({value:loc_u,id:"usr_inp",_s:'b.f, c.6,w1,bw.0'})
@@ -176,12 +175,13 @@ var $={
 			v._sys='hiro';
 			v.$='../login/req.php';
 		}
-		if(v.reg_typ!=="none" && v.usr!=="" && v.pwd!==""){
-			sessionStorage.setItem("ut", v.reg_typ);
+		if(v.usr!=="" && v.pwd!==""){
 			jax(v,function(r){
-				jalert(r)
 				if(r && r.status==1){
-					window.location=http="/5/hiro/?m=My-Account&s="+v.reg_typ+"-Dashboard";
+					sessionStorage.setItem("ut",r.sess.reg_typ);
+					var rd=r.sess.reg_typ.replace(/ /g,"-")
+					jalert(rd)
+					window.location=http="/5/hiro/?m=My-Account&s="+rd+"-Dashboard";
 				}else if(r){
 					window.location.reload();
 				}else{
@@ -217,7 +217,7 @@ var $={
 				no.div("View your research participation status, what studies you are currently apart of and what you may be eligible for.",{_s:"pl.20,f.95%"}),
 				no.div("To create an account, please fill the form on the next section with the following information. We will then contact you and verify your status as either a patient, health care professional or a participating research member and provide you with instructions to complete the registration process.",{_s:"pt.2%"}),
 				no.div("<b>Register for a new account</b>",{_c:"button",_s:"mt.2%,w.50%,ml.25%,f.90%,text-transform:uppercase"},function(){$.signup_build_1();}),
-				no.div("<b>If you have a registration code</b>",{_c:"button",_s:"mt.2%,mb.2%,w.50%,ml.25%,f.90%,text-transform:uppercase"},function(){$.signup_build_2();}),
+				//no.div("<b>If you have a registration code</b>",{_c:"button",_s:"mt.2%,mb.2%,w.50%,ml.25%,f.90%,text-transform:uppercase"},function(){$.signup_build_2();}),
 				no.div("Thank you.",{_s:"pt.0%,f.120%,cen"})
 
 	
@@ -674,6 +674,7 @@ var $={
 	ses_var_get:function(k){
 		var v=sessionStorage.getItem(k);
 		v=(v)?v.toLowerCase():false;
+		cl(v)
 		return v;
 	 },
 	font_resize:function(){
@@ -761,16 +762,14 @@ var $={
 		},
 		pdg_enrollment_all:function(v,d){
 			$.tg.all=d;
-			jax({$i:v},function(r){
-				r=JSON.parse(r).all; 
-				$.table_build(r,$.tg.all);
+			jax({$i:v,typ:"all"},function(r){
+				$.table_build(r.all,$.tg.all);
 			});
 		},
 		pdg_enrollment_local:function(v,d){
 			$.tg.local=d;
-			jax({$i:v},function(r){
-				r=JSON.parse(r).local;
-				$.table_build(r,$.tg.local);
+			jax({$i:v,typ:"local"},function(r){
+				$.table_build(r.local,$.tg.local);
 			});
 		}
 	 }

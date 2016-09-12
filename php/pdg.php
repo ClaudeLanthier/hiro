@@ -8,6 +8,7 @@ class pdg{
         $post=self::$post;
         $post['scope']='ifo';
         $post['request']='enrollment';
+        $post['typ']=$_POST['typ'];
         $r=qurl(self::$url,$post);
         return $r;
     }
@@ -19,9 +20,13 @@ class pdg{
         if(isset($_POST['v'])){$p['v']=$_POST['v'];}
         if(isset($_POST['usr'])){$p['u']=$_POST['usr'];if(isset($_POST['pwd'])){$p['p']=$_POST['pwd'];};}
         $r=qurl(self::$url,$p);
-        if($r && isset($r['sess'])){
-            $z=$r['sess'];
-            if($z){$_SESSION['hiro']=$z;}else{usset($_SESSION['hiro']);}
+        $r=qurl(self::$url,$p);
+        if($r){
+            $z=json_decode($r,1);
+            if(isset($z['sess'])){
+                $z=$z['sess'];
+                if($z){$_SESSION['hiro']=$z;}else{usset($_SESSION['hiro']);}
+            }
         }
         return $r;
     }
